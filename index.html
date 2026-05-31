@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="description"
+      content="Gestion personal de finanzas con balance, tarjetas, gastos y prestamos."
+    />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Finanzas Personales</title>
+  </head>
+  <body>
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
+
+    <main class="shell">
+      <section id="auth-view" class="panel auth-panel">
+        <div class="eyebrow">Proyecto local-first</div>
+        <h1>Finanzas personales sin servicios externos</h1>
+        <p class="lede">
+          Guarda tarjetas, gastos, pagos fijos y prestamos en el navegador con
+          una contraseña maestra y respaldo exportable.
+        </p>
+
+        <div class="auth-grid">
+          <form id="setup-form" class="card form-card hidden">
+            <h2>Crear acceso</h2>
+            <label>
+              Usuario
+              <input id="setup-username" type="text" autocomplete="username" required />
+            </label>
+            <label>
+              Contraseña maestra
+              <input id="setup-password" type="password" autocomplete="new-password" required />
+            </label>
+            <label>
+              Confirmar contraseña
+              <input
+                id="setup-password-confirm"
+                type="password"
+                autocomplete="new-password"
+                required
+              />
+            </label>
+            <button type="submit">Crear bóveda</button>
+          </form>
+
+          <form id="login-form" class="card form-card hidden">
+            <h2>Entrar</h2>
+            <label>
+              Usuario
+              <input id="login-username" type="text" autocomplete="username" required />
+            </label>
+            <label>
+              Contraseña maestra
+              <input id="login-password" type="password" autocomplete="current-password" required />
+            </label>
+            <button type="submit">Desbloquear</button>
+          </form>
+        </div>
+
+        <div id="auth-message" class="status-text"></div>
+      </section>
+
+      <section id="app-view" class="app-view hidden">
+        <header class="topbar panel">
+          <div>
+            <div class="eyebrow">Panel general</div>
+            <h1 id="welcome-title">Bienvenido</h1>
+            <p class="lede">Resumen claro para tomar decisiones quincenales o mensuales.</p>
+          </div>
+
+          <div class="toolbar">
+            <label>
+              Periodo
+              <select id="period-select">
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual">Mensual</option>
+              </select>
+            </label>
+            <button id="export-backup" type="button" class="secondary">Exportar respaldo</button>
+            <label class="file-button secondary">
+              Importar respaldo
+              <input id="import-backup" type="file" accept="application/json" />
+            </label>
+            <button id="lock-app" type="button" class="secondary">Bloquear</button>
+          </div>
+        </header>
+
+        <section class="summary-grid">
+          <article class="summary-card panel">
+            <span>Ingreso del periodo</span>
+            <strong id="summary-income">$0.00</strong>
+            <small id="summary-income-note">Edita el perfil para configurarlo.</small>
+          </article>
+          <article class="summary-card panel">
+            <span>Obligaciones próximas</span>
+            <strong id="summary-obligations">$0.00</strong>
+            <small>Pagos fijos, tarjetas y prestamos dentro del periodo.</small>
+          </article>
+          <article class="summary-card panel">
+            <span>Balance estimado</span>
+            <strong id="summary-balance">$0.00</strong>
+            <small>Ingreso menos compromisos por vencer.</small>
+          </article>
+          <article class="summary-card panel">
+            <span>Deuda total</span>
+            <strong id="summary-debt">$0.00</strong>
+            <small>Saldo acumulado en tarjetas y prestamos.</small>
+          </article>
+        </section>
+
+        <div class="workspace-layout">
+          <aside class="workspace-menu panel">
+            <div class="eyebrow">Menu</div>
+            <h2>Secciones</h2>
+            <p>Abre una sola vista a la vez para trabajar sin saturar la pantalla.</p>
+            <div class="menu-stack">
+              <button type="button" class="menu-button active" data-section="profile">Perfil</button>
+              <button type="button" class="menu-button" data-section="cards">Tarjetas</button>
+              <button type="button" class="menu-button" data-section="expenses">Gastos</button>
+              <button type="button" class="menu-button" data-section="card-payments">Pagos tarjeta</button>
+              <button type="button" class="menu-button" data-section="fixed">Pagos fijos</button>
+              <button type="button" class="menu-button" data-section="loans">Prestamos</button>
+              <button type="button" class="menu-button" data-section="analytics">Estadistica</button>
+            </div>
+          </aside>
+
+          <div class="workspace-content">
+        <section class="content-grid">
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Perfil</h2>
+                <p>Define tu ingreso y el ciclo base de trabajo.</p>
+              </div>
+            </div>
+            <form id="profile-form" class="stack-form">
+              <label>
+                Ingreso por periodo
+                <input id="profile-income" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Moneda
+                <select id="profile-currency">
+                  <option value="MXN">MXN</option>
+                  <option value="USD">USD</option>
+                </select>
+              </label>
+              <label>
+                Ciclo base
+                <select id="profile-period">
+                  <option value="quincenal">Quincenal</option>
+                  <option value="mensual">Mensual</option>
+                </select>
+              </label>
+              <div id="profile-quincenal-fields" class="profile-period-fields">
+                <label>
+                  Fecha de pago 1
+                  <input id="profile-payday-1" type="date" />
+                </label>
+                <label>
+                  Fecha de pago 2
+                  <input id="profile-payday-2" type="date" />
+                </label>
+              </div>
+              <div id="profile-monthly-fields" class="profile-period-fields hidden">
+                <label>
+                  Dia de pago del mes
+                  <input id="profile-payday-monthly" type="number" min="1" max="31" step="1" />
+                </label>
+              </div>
+              <button type="submit">Guardar perfil</button>
+            </form>
+          </article>
+
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Tarjetas</h2>
+                <p>Controla limite, saldo, minimo, corte y pago con pestañas por banco.</p>
+              </div>
+            </div>
+            <div id="cards-tabs" class="tabs"></div>
+            <form id="card-form" class="stack-form">
+              <label>
+                Nombre de la tarjeta
+                <input id="card-name" type="text" required />
+              </label>
+              <label>
+                Banco
+                <input id="card-bank" type="text" required />
+              </label>
+              <label>
+                Limite
+                <input id="card-limit" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Saldo actual
+                <input id="card-balance" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Pago minimo
+                <input id="card-min-payment" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Dia de corte
+                <input id="card-cut-day" type="number" min="1" max="31" step="1" required />
+              </label>
+              <label>
+                Dia limite de pago
+                <input id="card-due-day" type="number" min="1" max="31" step="1" required />
+              </label>
+              <button type="submit">Agregar tarjeta</button>
+            </form>
+            <div id="cards-list" class="item-list"></div>
+          </article>
+
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Gastos</h2>
+                <p>Registra compras en efectivo o cargo a tarjeta.</p>
+              </div>
+            </div>
+            <form id="expense-form" class="stack-form">
+              <label>
+                Concepto
+                <input id="expense-name" type="text" required />
+              </label>
+              <label>
+                Categoria
+                <select id="expense-category" required>
+                  <option value="Alimentacion">Alimentacion</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Hogar">Hogar</option>
+                  <option value="Servicios">Servicios</option>
+                  <option value="Salud">Salud</option>
+                  <option value="Educacion">Educacion</option>
+                  <option value="Entretenimiento">Entretenimiento</option>
+                  <option value="Suscripciones">Suscripciones</option>
+                  <option value="Compras">Compras</option>
+                  <option value="Ahorro">Ahorro</option>
+                  <option value="Deuda">Deuda</option>
+                  <option value="Otros">Otros</option>
+                </select>
+              </label>
+              <label>
+                Monto
+                <input id="expense-amount" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Fecha
+                <input id="expense-date" type="date" required />
+              </label>
+              <label>
+                Metodo de pago
+                <select id="expense-method">
+                  <option value="efectivo">Efectivo</option>
+                  <option value="tarjeta">Tarjeta</option>
+                </select>
+              </label>
+              <label>
+                Tarjeta relacionada
+                <select id="expense-card"></select>
+              </label>
+              <button type="submit">Agregar gasto</button>
+            </form>
+            <div id="expenses-list" class="item-list"></div>
+          </article>
+
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Pagos a tarjetas</h2>
+                <p>Reduce saldos y deja un historial simple.</p>
+              </div>
+            </div>
+            <form id="card-payment-form" class="stack-form">
+              <label>
+                Tarjeta
+                <select id="card-payment-card" required></select>
+              </label>
+              <label>
+                Monto
+                <input id="card-payment-amount" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Fecha
+                <input id="card-payment-date" type="date" required />
+              </label>
+              <label>
+                Nota
+                <input id="card-payment-note" type="text" />
+              </label>
+              <button type="submit">Registrar pago</button>
+            </form>
+            <div id="card-payments-list" class="item-list"></div>
+          </article>
+
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Pagos fijos</h2>
+                <p>Servicios, renta, suscripciones y otros compromisos.</p>
+              </div>
+            </div>
+            <form id="fixed-form" class="stack-form">
+              <label>
+                Nombre
+                <input id="fixed-name" type="text" required />
+              </label>
+              <label>
+                Monto
+                <input id="fixed-amount" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Frecuencia
+                <select id="fixed-frequency">
+                  <option value="quincenal">Quincenal</option>
+                  <option value="mensual">Mensual</option>
+                </select>
+              </label>
+              <label>
+                Proximo vencimiento
+                <input id="fixed-next-due" type="date" required />
+              </label>
+              <button type="submit">Agregar pago fijo</button>
+            </form>
+            <div id="fixed-list" class="item-list"></div>
+          </article>
+
+          <article class="panel section-card">
+            <div class="section-head">
+              <div>
+                <h2>Prestamos</h2>
+                <p>Saldo, parcialidad y siguiente fecha de pago.</p>
+              </div>
+            </div>
+            <form id="loan-form" class="stack-form">
+              <label>
+                Nombre
+                <input id="loan-name" type="text" required />
+              </label>
+              <label>
+                Saldo actual
+                <input id="loan-balance" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Parcialidad
+                <input id="loan-installment" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Frecuencia
+                <select id="loan-frequency">
+                  <option value="quincenal">Quincenal</option>
+                  <option value="mensual">Mensual</option>
+                </select>
+              </label>
+              <label>
+                Proximo vencimiento
+                <input id="loan-next-due" type="date" required />
+              </label>
+              <button type="submit">Agregar prestamo</button>
+            </form>
+            <div id="loans-list" class="item-list"></div>
+          </article>
+        </section>
+
+        <section class="panel analytics-panel">
+          <div class="section-head">
+            <div>
+              <h2>Estadistica simple</h2>
+              <p>Resumen de gasto por categoria para lectura rapida.</p>
+            </div>
+          </div>
+          <div id="category-bars" class="bars"></div>
+          <div id="upcoming-list" class="upcoming-list"></div>
+        </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="item-template">
+      <article class="item-card">
+        <div class="item-main">
+          <strong class="item-title"></strong>
+          <p class="item-meta"></p>
+        </div>
+        <div class="item-values"></div>
+        <div class="item-actions"></div>
+      </article>
+    </template>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Finanzas">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#08111f" />
+  <circle cx="256" cy="192" r="124" fill="url(#g)" opacity="0.16" />
+  <path d="M138 250c0-65 53-118 118-118s118 53 118 118-53 118-118 118-118-53-118-118Z" fill="none" stroke="url(#g)" stroke-width="28" />
+  <path d="M195 260h122M195 302h92" stroke="#e5eefb" stroke-width="24" stroke-linecap="round" />
+</svg>
