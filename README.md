@@ -1,24 +1,31 @@
-# Finanzas Personales
+Local Finance Vault
 
-Proyecto local-first para control de finanzas personales con:
+Aplicación web enfocada en gestión financiera personal bajo un enfoque local-first.
 
-- login local con usuario y contraseña
-- datos cifrados en el navegador
-- tarjetas, gastos, pagos fijos y prestamos
-- resumen quincenal o mensual
-- respaldo exportable/importable
-- modo PWA instalable
+El proyecto fue diseñado para mantener la información financiera almacenada localmente en cada dispositivo, priorizando privacidad, aislamiento de datos y funcionamiento independiente de servicios externos.
 
-## Uso
+Características
 
-Abre `index.html` con un servidor local o publícalo como sitio estatico.
+- Registro de ingresos y gastos
+- Persistencia local de información
+- Gestión independiente por dispositivo
+- Organización de movimientos financieros
+- Interfaz enfocada en administración personal
 
-Ejemplo rapido con Python:
+Tecnologías utilizadas
 
-```bash
-python -m http.server 5173
-```
+- JavaScript
+- HTML
+- CSS
+- Almacenamiento local
 
-## Nota de seguridad
+Objetivo del proyecto
 
-Los datos no se suben a GitHub ni a ningun backend. Se guardan cifrados en el navegador con una contraseña maestra.
+Explorar un enfoque local-first para administración financiera personal sin dependencia de infraestructura cloud o sincronización externa.
+
+Aprendizajes
+
+- Persistencia local de datos
+- Organización de información financiera
+- Manejo de estado en frontend
+- Diseño de aplicaciones independientes por dispositivo
